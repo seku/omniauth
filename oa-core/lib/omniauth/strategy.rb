@@ -37,23 +37,35 @@ module OmniAuth
       @env['omniauth.strategy'] = self if on_auth_path?
 
       return mock_call!(env) if OmniAuth.config.test_mode
-
+      Rails.logger.info "_______________________________ aloowed request "
+      Rails.logger.info OmniAuth.config.allowed_request_methods.include?(request.request_method.downcase.to_sym)
       return request_call if on_request_path? && OmniAuth.config.allowed_request_methods.include?(request.request_method.downcase.to_sym)
       return callback_call if on_callback_path?
       return other_phase if respond_to?(:other_phase)
+      Rails.logger.info "(((((((((((((((((((((((( chuj ))))))))))))))))))))))))"
+      Rails.logger.info "%%%%%%%%%%%%%%%%%%%%%%%%% #{callback_path} "
+      Rails.logger.info env.inspect
       @app.call(env)
     end
 
     # Performs the steps necessary to run the request phase of a strategy.
     def request_call
+      Rails.logger.info "((((((((((((((((((((((((( request_call )))))))))))))))))))))))))"
       setup_phase
       if response = call_through_to_app
+        Rails.logger.info "((((((((((((((((((((((((( response  )))))))))))))))))))))))))"
+        Rails.logger.info response
         response
       else
         if request.params['origin']
           @env['rack.session']['omniauth.origin'] = request.params['origin']
+          Rails.logger.info "((((((((((((((((((((((((( origin  )))))))))))))))))))))))))"
+          Rails.logger.info request.params['origin']
         elsif env['HTTP_REFERER'] && !env['HTTP_REFERER'].match(/#{request_path}$/)
           @env['rack.session']['omniauth.origin'] = env['HTTP_REFERER']
+          Rails.logger.info "((((((((((((((((((((((((( refferer  )))))))))))))))))))))))))"
+          Rails.logger.info "%%%%%%%%%%%%%%%%%%%%%%%%% #{callback_path} "
+          Rails.logger.info env['HTTP_REFERER']
         end
         request_phase
       end
@@ -69,6 +81,10 @@ module OmniAuth
     end
 
     def on_auth_path?
+      Rails.logger.info "************************************************ OMNIAUTH INSIDE ****************************"
+      Rails.logger.info on_request_path?
+      Rails.logger.info request_path
+      Rails.logger.info "_____________________________________________________________________________________________"
       on_request_path? || on_callback_path?
     end
 
@@ -121,6 +137,7 @@ module OmniAuth
     end
 
     def request_phase
+      Rails.logger.info "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Not implemented error "
       raise NotImplementedError
     end
 

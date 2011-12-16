@@ -39,8 +39,12 @@ module OmniAuth
         end
 
       rescue ::Timeout::Error => e
+        Rails.logger.info "----------------------------------------1"
+        Rails.logger.info e.inspect
         fail!(:timeout, e)
       rescue ::Net::HTTPFatalError, ::OpenSSL::SSL::SSLError => e
+        Rails.logger.info "----------------------------------------2"
+        Rails.logger.info e.inspect
         fail!(:service_unavailable, e)
       end
 
@@ -59,14 +63,26 @@ module OmniAuth
         @access_token = request_token.get_access_token(opts)
         super
       rescue ::Timeout::Error => e
+        Rails.logger.info "----------------------------------------3"
+        Rails.logger.info e.inspect
         fail!(:timeout, e)
       rescue ::Net::HTTPFatalError, ::OpenSSL::SSL::SSLError => e
+        Rails.logger.info "----------------------------------------4"
+        Rails.logger.info e.inspect
         fail!(:service_unavailable, e)
+        Rails.logger.info "----------------------------------------5"
+        Rails.logger.info e.inspect
       rescue ::OAuth::Unauthorized => e
+        Rails.logger.info "----------------------------------------6"
+        Rails.logger.info e.inspect
         fail!(:invalid_credentials, e)
       rescue ::NoMethodError, ::MultiJson::DecodeError => e
+        Rails.logger.info "----------------------------------------7"
+        Rails.logger.info e.inspect
         fail!(:invalid_response, e)
       rescue ::OmniAuth::NoSessionError => e
+        Rails.logger.info "----------------------------------------8"
+        Rails.logger.info e.inspect
         fail!(:session_expired, e)
       end
 
